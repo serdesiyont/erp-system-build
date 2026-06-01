@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { DUMMY_ORG_ID } from '@/lib/constants';
 import { PageHeader } from '@/components/page-header';
 import { DataTable } from '@/components/data-table';
 import { Button } from '@/components/ui/button';
@@ -74,7 +75,7 @@ export default function ProductsPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          organization_id: 'org-placeholder',
+          organization_id: DUMMY_ORG_ID,
           name: formData.name,
           sku: formData.sku,
           description: formData.description || null,

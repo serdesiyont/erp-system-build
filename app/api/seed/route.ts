@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { successResponse, errorResponse } from '@/lib/api-utils';
+import { successResponse, errorResponse, parseError } from '@/lib/api-utils';
 import { sql } from '@/lib/db/client';
+import { DUMMY_USER_ID, DUMMY_ORG_ID } from '@/lib/constants';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,37 +12,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if owner already exists
-    const existingUser = await sql.query(
-      `SELECT id FROM users WHERE email = $1`,
-      ['owner@erppro.com']
+    // Ensure dummy user and org exist with known IDs
+    await sql.query(
+      `INSERT INTO users (id, email, name, created_at)
+       VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
+       ON CONFLICT (email) DO UPDATE SET id = $1`,
+      [DUMMY_USER_ID, 'owner@erppro.com', 'ERP Pro Owner']
     );
 
-    if (existingUser.length > 0) {
-      return NextResponse.json(
-        successResponse(null, 'Default owner already exists'),
-        { status: 200 }
+    await sql.query(
+      `INSERT INTO organizations (id, user_id, name, description, created_at)
+       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+       ON CONFLICT (id) DO NOTHING`,
+      [DUMMY_ORG_ID, DUMMY_USER_ID, 'Demo Company', 'Default ERP organization for demo purposes']
+    );
+
+    // Check if already fully seeded
+    const existingOrgs = await sql.query(
+      `SELECT id FROM organizations WHERE id = $1`,
+      [DUMMY_ORG_ID]
+    );
+
+    if (existingOrgs.length > 0) {
+      const existingWarehouses = await sql.query(
+        `SELECT id FROM warehouses WHERE organization_id = $1`,
+        [DUMMY_ORG_ID]
       );
+      if (existingWarehouses.length > 0) {
+        return NextResponse.json(
+          successResponse(null, 'Database already seeded with dummy IDs'),
+          { status: 200 }
+        );
+      }
     }
 
-    // Create default user (owner)
-    const defaultUser = await sql.query(
-      `INSERT INTO users (email, name, created_at) VALUES ($1, $2, CURRENT_TIMESTAMP) RETURNING *`,
-      ['owner@erppro.com', 'ERP Pro Owner']
-    );
-
-    // Create default organization
-    const defaultOrg = await sql.query(
-      `INSERT INTO organizations (user_id, name, description, created_at) 
-       VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *`,
-      [defaultUser[0].id, 'Demo Company', 'Default ERP organization for demo purposes']
-    );
+    const defaultUser = [{ id: DUMMY_USER_ID }];
+    const defaultOrg = [{ id: DUMMY_ORG_ID }];
 
     // Create default warehouse
     const defaultWarehouse = await sql.query(
-      `INSERT INTO warehouses (organization_id, name, location, created_at) 
+      `INSERT INTO warehouses (organization_id, name, address, created_at) 
        VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *`,
-      [defaultOrg[0].id, 'Main Warehouse', 'Central Distribution']
+      [defaultOrg[0].id, 'Main Warehouse', 'Central Distribution Center']
     );
 
     // Create sample categories
@@ -69,7 +81,7 @@ export async function POST(request: NextRequest) {
 
       if (category.length > 0) {
         await sql.query(
-          `INSERT INTO products (organization_id, category_id, name, sku, unit_price, reorder_level, created_at)
+          `INSERT INTO products (organization_id, category_id, name, sku, selling_price, reorder_level, created_at)
            VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP)`,
           [defaultOrg[0].id, category[0].id, product.name, product.sku, product.price, 10]
         );

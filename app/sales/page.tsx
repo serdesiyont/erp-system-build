@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { DUMMY_USER_ID, DUMMY_ORG_ID } from '@/lib/constants';
 import { PageHeader } from '@/components/page-header';
 import { DataTable } from '@/components/data-table';
 import { StatusBadge } from '@/components/status-badge';
@@ -71,8 +72,8 @@ export default function SalesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          organization_id: 'org-placeholder', // Placeholder
-          created_by: 'user-placeholder',
+          organization_id: DUMMY_ORG_ID,
+          created_by: DUMMY_USER_ID,
         }),
       });
 

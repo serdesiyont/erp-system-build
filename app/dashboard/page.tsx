@@ -17,6 +17,14 @@ interface DashboardStats {
   lowStockProducts: any[];
 }
 
+function formatCurrency(value: unknown) {
+  const numberValue = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(numberValue)) {
+    return '$0.00';
+  }
+  return `$${numberValue.toFixed(2)}`;
+}
+
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalProducts: 0,
@@ -128,7 +136,7 @@ export default function Dashboard() {
             { key: 'customer_name', label: 'Customer' },
             { key: 'order_date', label: 'Date' },
             { key: 'status', label: 'Status' },
-            { key: 'total', label: 'Total', render: (val) => `$${val?.toFixed(2) || '0.00'}` },
+            { key: 'total', label: 'Total', render: (val) => formatCurrency(val) },
           ]}
           data={stats.recentOrders}
           loading={loading}
@@ -149,7 +157,7 @@ export default function Dashboard() {
             { key: 'sku', label: 'SKU' },
             { key: 'name', label: 'Product' },
             { key: 'reorder_level', label: 'Reorder Level' },
-            { key: 'selling_price', label: 'Price', render: (val) => `$${val?.toFixed(2) || '0.00'}` },
+            { key: 'selling_price', label: 'Price', render: (val) => formatCurrency(val) },
           ]}
           data={stats.lowStockProducts}
           loading={loading}

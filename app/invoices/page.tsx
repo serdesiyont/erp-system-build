@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { DUMMY_USER_ID, DUMMY_ORG_ID } from '@/lib/constants';
 import { PageHeader } from '@/components/page-header';
 import { DataTable } from '@/components/data-table';
 import { StatusBadge } from '@/components/status-badge';
@@ -85,7 +86,7 @@ export default function InvoicesPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          organization_id: 'org-placeholder',
+          organization_id: DUMMY_ORG_ID,
           invoice_number: formData.invoice_number,
           invoice_type: formData.invoice_type,
           customer_id: formData.invoice_type === 'sales' ? formData.customer_id || null : null,
@@ -97,7 +98,7 @@ export default function InvoicesPage() {
           tax: formData.tax ? parseFloat(formData.tax) : 0,
           total: formData.total ? parseFloat(formData.total) : 0,
           notes: formData.notes || null,
-          created_by: 'user-placeholder',
+          created_by: DUMMY_USER_ID,
         }),
       });
 

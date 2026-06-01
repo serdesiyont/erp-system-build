@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { DUMMY_USER_ID, DUMMY_ORG_ID } from '@/lib/constants';
 import { PageHeader } from '@/components/page-header';
 import { DataTable } from '@/components/data-table';
 import { StatusBadge } from '@/components/status-badge';
@@ -68,13 +69,13 @@ export default function PurchasingPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          organization_id: 'org-placeholder',
+          organization_id: DUMMY_ORG_ID,
           supplier_id: formData.supplier_id,
           order_date: formData.order_date,
           expected_delivery_date: formData.expected_delivery_date || null,
           status: formData.status,
           notes: formData.notes || null,
-          created_by: 'user-placeholder',
+          created_by: DUMMY_USER_ID,
         }),
       });
 

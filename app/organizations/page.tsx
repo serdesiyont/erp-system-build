@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { DUMMY_USER_ID } from '@/lib/constants';
 import { PageHeader } from '@/components/page-header';
 import { DataTable } from '@/components/data-table';
 import { Button } from '@/components/ui/button';
@@ -58,7 +59,7 @@ export default function OrganizationsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          user_id: 'user-' + Date.now(), // Placeholder user_id
+          user_id: DUMMY_USER_ID,
         }),
       });
 

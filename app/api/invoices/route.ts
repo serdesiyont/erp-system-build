@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db/client';
 import { successResponse, errorResponse, parseError } from '@/lib/api-utils';
+import { DUMMY_USER_ID } from '@/lib/constants';
 
 export async function GET(request: NextRequest) {
   try {
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
         tax || 0,
         total || 0,
         notes,
-        created_by || 'system',
+        created_by || DUMMY_USER_ID,
       ]
     );
 

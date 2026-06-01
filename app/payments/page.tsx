@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { DUMMY_USER_ID, DUMMY_ORG_ID } from '@/lib/constants';
 import { PageHeader } from '@/components/page-header';
 import { DataTable } from '@/components/data-table';
 import { Button } from '@/components/ui/button';
@@ -66,14 +67,14 @@ export default function PaymentsPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          organization_id: 'org-placeholder',
+          organization_id: DUMMY_ORG_ID,
           invoice_id: formData.invoice_id,
           payment_date: formData.payment_date,
           amount: formData.amount ? parseFloat(formData.amount) : 0,
           payment_method: formData.payment_method || null,
           reference_number: formData.reference_number || null,
           notes: formData.notes || null,
-          recorded_by: 'user-placeholder',
+          recorded_by: DUMMY_USER_ID,
         }),
       });
 

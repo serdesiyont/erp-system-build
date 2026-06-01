@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { DUMMY_USER_ID, DUMMY_ORG_ID } from '@/lib/constants';
 import { PageHeader } from '@/components/page-header';
 import { DataTable } from '@/components/data-table';
 import { StatusBadge } from '@/components/status-badge';
@@ -62,8 +63,33 @@ export default function ProductionPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
-      // Make API call when endpoint is ready
-      setShowForm(false);
+      const res = await fetch('/api/production-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          organization_id: DUMMY_ORG_ID,
+          product_id: formData.product_id,
+          quantity_ordered: formData.quantity_ordered,
+          start_date: formData.start_date,
+          completion_date: formData.completion_date || null,
+          status: formData.status,
+          notes: formData.notes || null,
+          created_by: DUMMY_USER_ID,
+        }),
+      });
+
+      if (res.ok) {
+        setFormData({
+          product_id: '',
+          quantity_ordered: 0,
+          start_date: new Date().toISOString().split('T')[0],
+          completion_date: '',
+          status: 'planned',
+          notes: '',
+        });
+        setShowForm(false);
+        await fetchData();
+      }
     } catch (error) {
       console.error('Error creating production order:', error);
     }

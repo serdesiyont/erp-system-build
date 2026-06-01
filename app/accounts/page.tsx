@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { DUMMY_ORG_ID } from '@/lib/constants';
 import { PageHeader } from '@/components/page-header';
 import { DataTable } from '@/components/data-table';
 import { Button } from '@/components/ui/button';
@@ -54,7 +55,7 @@ export default function AccountsPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          organization_id: 'org-placeholder',
+          organization_id: DUMMY_ORG_ID,
           account_number: formData.account_number,
           account_name: formData.account_name,
           account_type: formData.account_type,
